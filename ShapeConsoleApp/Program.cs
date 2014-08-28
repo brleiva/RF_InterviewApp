@@ -14,6 +14,8 @@ namespace ShapeConsoleApp
         {
             new ShapeProgram().StartProgram();
         }
-        
+
+
+        //http://support.nevron.com/KB/a233/check-whether-2-arbitrary-shapes-intersectoverlap-the.aspx
     }
 }
