@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace ShapeConsoleApp.Models
@@ -30,6 +31,32 @@ namespace ShapeConsoleApp.Models
         /// Create File w image for HTML render
         /// </summary>
         void CreateFile();
+
+        /// <summary>
+        /// Print shape Information
+        /// </summary>
+        void PrintInfo();
+
+        /// <summary>
+        /// Inside Shapes List
+        /// </summary>
+        HashSet<int> InsideShapes
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        int Id { get; }
+
+        /// <summary>
+        /// Name
+        /// </summary>
+        string Name { get; set; }
+
+        SolidBrush SolidBrushColor { get; }
     }
     /// <summary>
     /// Shape object
@@ -52,6 +79,13 @@ namespace ShapeConsoleApp.Models
         public SolidBrush SolidBrushColor
         {
             get { return _color; }
+        }
+
+        private HashSet<int> _insideShapes = new HashSet<int>();
+        public HashSet<int> InsideShapes
+        {
+            get { return _insideShapes; }
+            set { _insideShapes = value; }
         }
 
         protected string OutputPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\html_output\\";
@@ -119,18 +153,34 @@ namespace ShapeConsoleApp.Models
         /// <returns></returns>
         public string GetHtml()
         {
+            var aditional = ""; var flag = "";
+            if (InsideShapes.Count > 0)
+            {
+                aditional += "style=\"cursor:pointer\" onclick='showInsideShapes(\""+Id+"\",\""+Name+"\",[";
+                var i = 0;
+                foreach (var id in InsideShapes)
+                {
+                    if (i == 0)
+                        aditional += "" + id;
+                    else
+                        aditional += ", " + id;
+                    i++;
+                }
+                aditional += "])'";
+                flag = "style=\"border-right: groove 5px red\"";
+            }
             return @"<div style='float: left; width: 126px; border: solid 1px orange'>
                         <table style='width:100%'>
                             <tr>
-                                <td colspan='2' align='center'><img src='" + Id + ".png' /></td>" +
+                                <td colspan='2' align='center'><img src='" + Id + ".png' " + aditional + "/></td>" +
                             @"</tr>
                             <tr>
                                 <td>Id:</td>
                                 <td>" + Id + "</td>" +
                             @"</tr>
                             <tr>
-                                <td>Area:</td>
-                                <td>" + GetArea() + "</td>" +
+                                <td>Area:</td>"+
+                                "<td " + flag + ">" + GetArea() + "</td>" +
                             @"</tr>
                         </table>
                     </div>";
@@ -153,6 +203,15 @@ namespace ShapeConsoleApp.Models
                     bmp.Save(path);
                 }
             }
+        }
+
+        /// <summary>
+        /// Print Info of the shape
+        /// </summary>
+        public void PrintInfo()
+        {
+            Console.WriteLine("\n=> " + Name + " Id: " + Id + " with centre at (x,y): (" + X + "," + Y + ") and radius: " + Radius);
+            Console.WriteLine("\nAREA: " + GetArea());
         }
     }
 
@@ -199,18 +258,34 @@ namespace ShapeConsoleApp.Models
         /// <returns></returns>
         public string GetHtml()
         {
+            var aditional = ""; var flag = "";
+            if (InsideShapes.Count > 0)
+            {
+                aditional += "style=\"cursor:pointer\" onclick='showInsideShapes(\""+Id+"\",\""+Name+"\",[";
+                var i = 0;
+                foreach (var id in InsideShapes)
+                {
+                    if (i == 0)
+                        aditional += "" + id;
+                    else
+                        aditional += ", " + id;
+                    i++;
+                }
+                aditional += "])'";
+                flag = "style=\"border-right: groove 5px red\"";
+            }
             return @"<div style='float: left; width: 126px; border: solid 1px orange'>
                         <table style='width:100%'>
                             <tr>
-                                <td colspan='2' align='center'><img src='" + Id + ".png' /></td>" +
+                                <td colspan='2' align='center'><img src='" + Id + ".png' " + aditional + "/></td>" +
                             @"</tr>
                             <tr>
                                 <td>Id:</td>
                                 <td>" + Id + "</td>" +
                             @"</tr>
                             <tr>
-                                <td>Area:</td>
-                                <td>" + GetArea() + "</td>" +
+                                <td>Area:</td>"+
+                                "<td " + flag + ">" + GetArea() + "</td>" +
                             @"</tr>
                         </table>
                     </div>";
@@ -233,6 +308,16 @@ namespace ShapeConsoleApp.Models
                     bmp.Save(path);
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Print Info of the shape
+        /// </summary>
+        public void PrintInfo()
+        {
+            Console.WriteLine("\n=> " + Name + " Id: " + Id + " at (x,y): (" + X + "," + Y + ") and side: " + Side);
+            Console.WriteLine("\nAREA: " + GetArea());
         }
     }
 
@@ -284,18 +369,34 @@ namespace ShapeConsoleApp.Models
         /// <returns></returns>
         public string GetHtml()
         {
+            var aditional = ""; var flag = "";
+            if (InsideShapes.Count > 0)
+            {
+                aditional += "style=\"cursor:pointer\" onclick='showInsideShapes(\""+Id+"\",\""+Name+"\",[";
+                var i = 0;
+                foreach (var id in InsideShapes)
+                {
+                    if (i == 0)
+                        aditional += "" + id;
+                    else
+                        aditional += ", " + id;
+                    i++;
+                }
+                aditional += "])'";
+                flag = "style=\"border-right: groove 5px red\"";
+            }
             return @"<div style='float: left; width: 126px; border: solid 1px orange'>
                         <table style='width:100%'>
                             <tr>
-                                <td colspan='2' align='center'><img src='" + Id + ".png' /></td>" +
+                                <td colspan='2' align='center'><img src='" + Id + ".png' " + aditional + "/></td>" +
                             @"</tr>
                             <tr>
                                 <td>Id:</td>
                                 <td>" + Id + "</td>" +
                             @"</tr>
                             <tr>
-                                <td>Area:</td>
-                                <td>" + GetArea() + "</td>" +
+                                <td>Area:</td>"+
+                                "<td " + flag + ">" + GetArea() + "</td>" +
                             @"</tr>
                         </table>
                     </div>";
@@ -318,6 +419,15 @@ namespace ShapeConsoleApp.Models
                     bmp.Save(path);
                 }
             }
+        }
+
+        /// <summary>
+        /// Print Info of the shape
+        /// </summary>
+        public void PrintInfo()
+        {
+            Console.WriteLine("\n=> " + Name + " Id: " + Id + " at (x,y): (" + X + "," + Y + "), width: " + Width + " and height:" + Height);
+            Console.WriteLine("\nAREA: " + GetArea());
         }
     }
 
@@ -377,18 +487,34 @@ namespace ShapeConsoleApp.Models
         /// <returns></returns>
         public string GetHtml()
         {
+            var aditional = ""; var flag = "";
+            if (InsideShapes.Count > 0)
+            {
+                aditional += "style=\"cursor:pointer\" onclick='showInsideShapes(\""+Id+"\",\""+Name+"\",[";
+                var i = 0;
+                foreach (var id in InsideShapes)
+                {
+                    if (i == 0)
+                        aditional += "" + id;
+                    else
+                        aditional += ", " + id;
+                    i++;
+                }
+                aditional += "])'";
+                flag = "style=\"border-right: groove 5px red\"";
+            }
             return @"<div style='float: left; width: 126px; border: solid 1px orange'>
                         <table style='width:100%'>
                             <tr>
-                                <td colspan='2' align='center'><img src='" + Id + ".png' /></td>" +
+                                <td colspan='2' align='center'><img src='" + Id + ".png' " + aditional + "/></td>" +
                             @"</tr>
                             <tr>
                                 <td>Id:</td>
                                 <td>" + Id + "</td>" +
                             @"</tr>
                             <tr>
-                                <td>Area:</td>
-                                <td>" + GetArea() + "</td>" +
+                                <td>Area:</td>"+
+                                "<td " + flag + ">" + GetArea() + "</td>" +
                             @"</tr>
                         </table>
                     </div>";
@@ -411,6 +537,15 @@ namespace ShapeConsoleApp.Models
                     bmp.Save(path);
                 }
             }
+        }
+
+        /// <summary>
+        /// Print Info of the shape
+        /// </summary>
+        public void PrintInfo()
+        {
+            Console.WriteLine("\n=> " + Name + " Id: " + Id + " at (x,y) points: (" + X + "," + Y + "), (" + X2 + ", " + Y2 + "), (" + X3 + ", " + Y3 + ")");
+            Console.WriteLine("\nAREA: " + GetArea());
         }
     }
 
@@ -456,6 +591,14 @@ namespace ShapeConsoleApp.Models
             gr.FillEllipse(Brushes.Orange, X + 512 - (Radius1 / 2), (Y * -1) + 384 - (Radius1 / 2), Radius1, Radius1);
         }
 
+        /// <summary>
+        /// Draw the object
+        /// </summary>
+        /// <param name="gr"></param>load
+        public void Draw2(Graphics gr)
+        {
+            gr.FillEllipse(SolidBrushColor, X + 512 - (Radius1 / 2), (Y * -1) + 384 - (Radius1 / 2), Radius1, Radius1);
+        }
 
         /// <summary>
         /// Get HTML for render
@@ -463,18 +606,34 @@ namespace ShapeConsoleApp.Models
         /// <returns></returns>
         public string GetHtml()
         {
+            var aditional = ""; var flag = "";
+            if (InsideShapes.Count > 0)
+            {
+                aditional += "style=\"cursor:pointer\" onclick='showInsideShapes(\""+Id+"\",\""+Name+"\",[";
+                var i = 0;
+                foreach (var id in InsideShapes)
+                {
+                    if (i == 0)
+                        aditional += "" + id;
+                    else
+                        aditional += ", " + id;
+                    i++;
+                }
+                aditional += "])'";
+                flag = "style=\"border-right: groove 5px red\"";
+            }
             return @"<div style='float: left; width: 126px; border: solid 1px orange'>
                         <table style='width:100%'>
                             <tr>
-                                <td colspan='2' align='center'><img src='" + Id + ".png' /></td>" +
+                                <td colspan='2' align='center'><img src='" + Id + ".png' " + aditional + "/></td>" +
                             @"</tr>
                             <tr>
                                 <td>Id:</td>
                                 <td>" + Id + "</td>" +
                             @"</tr>
                             <tr>
-                                <td>Area:</td>
-                                <td>" + GetArea() + "</td>" +
+                                <td>Area:</td>"+
+                                "<td " + flag + ">" + GetArea() + "</td>" +
                             @"</tr>
                         </table>
                     </div>";
@@ -498,6 +657,15 @@ namespace ShapeConsoleApp.Models
                     bmp.Save(path);
                 }
             }
+        }
+
+        /// <summary>
+        /// Print Info of the shape
+        /// </summary>
+        public void PrintInfo()
+        {
+            Console.WriteLine("\n=> " + Name + " Id: " + Id + " with centre at (x,y): (" + X + "," + Y + "), radius1 : " + Radius1 + " & radius2 : " + Radius2);
+            Console.WriteLine("\nAREA: " + GetArea());
         }
     }
 

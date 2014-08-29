@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
@@ -7,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using ShapeConsoleApp.Models;
 using Rectangle = ShapeConsoleApp.Models.Rectangle;
 
@@ -30,8 +28,8 @@ namespace ShapeConsoleApp.Business
             Console.Clear();
             do
             {
-                Console.WriteLine("\nType a new command....\n\n");
-                Console.Write(">");
+                Console.WriteLine("\nType a new command...\n\n");
+                Console.Write("root@rulefinancial # ");
             } while (ReadFromConsole());
 
             CleanOutput();
@@ -44,7 +42,7 @@ namespace ShapeConsoleApp.Business
         /// <returns></returns>
         public bool ReadFromConsole(string args = null)
         {
-            string[] line = (args == null? Console.ReadLine() : args).Split(new char[] { ' ' });
+            string[] line = (args == null ? Console.ReadLine() : args).Split(new char[] { ' ' });
 
             switch (line[0].ToUpper())
             {
@@ -71,8 +69,17 @@ namespace ShapeConsoleApp.Business
                 case "SHOW":
                     OpenHTML();
                     break;
+                case "HELP":
+                    PrintHelp();
+                    break;
                 case "LOAD":
                     LoadShapes();
+                    break;
+                case "LIST":
+                    ListShapes();
+                    break;
+                case "CLEAR":
+                    ClearShapes();
                     break;
                 case "EXIT":
                     return false;
@@ -84,7 +91,58 @@ namespace ShapeConsoleApp.Business
             return true;
         }
 
-        
+        /// <summary>
+        /// Clear
+        /// </summary>
+        private void ClearShapes()
+        {
+            ShapeList.Clear();
+        }
+
+        /// <summary>
+        /// List all shapes
+        /// </summary>
+        private void ListShapes()
+        {
+            double area = 0;
+            foreach (var shape in ShapeList)
+            {
+                shape.PrintInfo();
+                area += shape.GetArea();
+            }
+
+            Console.WriteLine("\nTotal surface area of shapes: " + area + "\n");
+        }
+
+        /// <summary>
+        /// Print help
+        /// </summary>
+        private void PrintHelp()
+        {
+            //Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Clear();
+
+            Console.WriteLine("============================ H E L P Information ===============================");
+            Console.WriteLine("USAGE:\n\tdraw circle x y radius\n\tdraw square x y side\n\tdraw triangle x1 y1 x2 y2 x3 y3\n\tdraw donut x y radius1 radius2\n\tdraw rectangle x y width height");
+            Console.WriteLine("\n\tONLY Integer values are expected\n\t******\n");
+
+            Console.WriteLine("\tload -> This command load by default shapes from App.config file");
+
+            Console.WriteLine("\thelp -> Prints this information");
+
+            Console.WriteLine("\tshow -> Shows a HTML file with the shapes");
+
+            Console.WriteLine("\tlist -> Prints the information of all shapes and total area");
+
+            Console.WriteLine("\texit -> Closes the program");
+
+            Console.WriteLine("\n============================ H E L P Information ===============================");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            
+        }
+
+
         /// <summary>
         /// Add a Circle
         /// </summary>
@@ -96,9 +154,8 @@ namespace ShapeConsoleApp.Business
             {
                 var circle = new Circle(values[0], values[1], values[2]);
                 ShapeList.Add(circle);
-                Console.WriteLine("\n=> " + circle.Name + " Id: " + circle.Id + " with centre at (x,y): (" + circle.X + "," + circle.Y + ") and radius: " + circle.Radius);
-                Console.WriteLine("\nAREA: " + circle.GetArea());
-
+                circle.PrintInfo();
+                PrintInsideShapes();
             }
         }
 
@@ -113,9 +170,8 @@ namespace ShapeConsoleApp.Business
             {
                 var square = new Square(values[0], values[1], values[2]);
                 ShapeList.Add(square);
-                Console.WriteLine("\n=> " + square.Name + " Id: " + square.Id + " at (x,y): (" + square.X + "," + square.Y + ") and side: " + square.Side);
-                Console.WriteLine("\nAREA: " + square.GetArea());
-
+                square.PrintInfo();
+                PrintInsideShapes();
             }
         }
 
@@ -130,9 +186,8 @@ namespace ShapeConsoleApp.Business
             {
                 var rectangle = new Rectangle(values[0], values[1], values[2], values[3]);
                 ShapeList.Add(rectangle);
-                Console.WriteLine("\n=> " + rectangle.Name + " Id: " + rectangle.Id + " at (x,y): (" + rectangle.X + "," + rectangle.Y + "), width: " + rectangle.Width + " and height:" + rectangle.Height);
-                Console.WriteLine("\nAREA: " + rectangle.GetArea());
-
+                rectangle.PrintInfo();
+                PrintInsideShapes();
             }
         }
 
@@ -147,8 +202,8 @@ namespace ShapeConsoleApp.Business
             {
                 var triangle = new Triangle(values[0], values[1], values[2], values[3], values[4], values[5]);
                 ShapeList.Add(triangle);
-                Console.WriteLine("\n=> " + triangle.Name + " Id: " + triangle.Id + " at (x,y) points: (" + triangle.X + "," + triangle.Y + "), (" + triangle.X2 + ", " + triangle.Y2 + "), (" + triangle.X3 + ", " + triangle.Y3 + ")");
-                Console.WriteLine("\nAREA: " + triangle.GetArea());
+                triangle.PrintInfo();
+                PrintInsideShapes();
             }
         }
 
@@ -163,9 +218,8 @@ namespace ShapeConsoleApp.Business
             {
                 var donut = new Donut(values[0], values[1], values[2], values[3]);
                 ShapeList.Add(donut);
-                Console.WriteLine("\n=> " + donut.Name + " Id: " + donut.Id + " with centre at (x,y): (" + donut.X + "," + donut.Y + "), radius1 : " + donut.Radius1 + " & radius2 : " + donut.Radius2);
-                Console.WriteLine("\nAREA: " + donut.GetArea());
-
+                donut.PrintInfo();
+                PrintInsideShapes();
             }
         }
 
@@ -185,7 +239,7 @@ namespace ShapeConsoleApp.Business
             {
                 Console.Write("FAIL\n");
             }
-            
+
         }
 
         /// <summary>
@@ -197,10 +251,9 @@ namespace ShapeConsoleApp.Business
             foreach (var shape in shapes)
             {
                 ReadFromConsole(shape);
-                Thread.Sleep(100);
             }
 
-            Console.WriteLine("\n\nLoaded: "+shapes.Length+" Shapes!");
+            Console.WriteLine("\n\nLoaded: " + shapes.Length + " Shapes!");
         }
 
 
@@ -235,32 +288,6 @@ namespace ShapeConsoleApp.Business
         }
 
 
-        private static Char GetKeyPress(String msg, Char[] validChars)
-        {
-
-            /**
-             line = 
-
-                if (Char.ToUpper(GetKeyPress(" (Y/N): ", new Char[] { 'Y', 'N' })) == 'N')
-                    continueFlag = false;
-             */
-            ConsoleKeyInfo keyPressed;
-            bool valid = false;
-
-            Console.WriteLine();
-            do
-            {
-                Console.Write(msg);
-                keyPressed = Console.ReadKey();
-                Console.WriteLine();
-                if (Array.Exists(validChars, ch => ch.Equals(Char.ToUpper(keyPressed.KeyChar))))
-                    valid = true;
-
-            } while (!valid);
-            return keyPressed.KeyChar;
-        }
-
-
         /// <summary>
         /// Create Files for HTML page
         /// </summary>
@@ -288,12 +315,28 @@ namespace ShapeConsoleApp.Business
                             <head>
                                 <meta charset='utf-8' />
                                 <title>Rule financial - Interview Output</title>
-                            </head>"+
-                            "<body style='font-family:\"Segoe UI\", sans-serif, Arial; font-size: 10pt;'>"+
-                                "<img src='"+System.IO.Path.Combine(OutputPath, "shapes.png")+"' style='display: block; margin-left: auto; margin-right: auto' />"+
-                                "<div style='display: block; margin-left: auto; margin-right: auto; width:1024px; color: Red; font-size: 14pt;'> Total surface area of shapes: " + area.ToString("0.00") + "</div>" +
+                            </head>" +
+                            "<body style='font-family:\"Segoe UI\", sans-serif, Arial; font-size: 10pt;'>" +
+                                "<img src='" + System.IO.Path.Combine(OutputPath, "shapes.png") + "' style='display: block; margin-left: auto; margin-right: auto' />" +
+                                "<div style='display: block; margin-left: auto; margin-right: auto; width:1024px; color: Red; font-size: 14pt;'>" +
+                                    "<table><tr><td nowrap>Total surface area of shapes:  " + area.ToString("0.00") + "</td><td width='100%' >&nbsp;</td><td nowrap style='border-left: groove 5px red; color: gray; font-size: 10pt;'>Shapes inside, click the shape!</td></tr></table>"+
+                                "</div>" +
                                 "<div style='display: block; margin-left: auto; margin-right: auto; width:1024px;'>" + shapes.ToString() + "</div>" +
                             @"</body>
+                            <script>
+                                function showInsideShapes(id, name, obj) {
+                                    var str = '';
+                                    for (var i = 0; i < obj.length; i++) {" +
+                                        "str += '<img src=\"' + obj[i] + '.png\" />Id:' + obj[i];" +
+                                   @"}
+                                    var w = 400;
+                                    var h = 300;
+                                    var left = (screen.width / 2) - (w / 2);
+                                    var top = (screen.height / 2) - (h / 2);
+                                    var OpenWindow = window.open('', 'Details', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);" +
+                                    "OpenWindow.document.write(\"<table style='width: 100%; font-family:Arial; font-size:8pt'><tr><td align='center'><table style='font-size:12pt; font-weight:bold'><tr><td><img src='\" + id + \".png' /></td><td>\" + name + \"&nbsp;&nbsp;Id:&nbsp;\" + id + \"</td></tr></table></td></tr><tr><td align='center' style='font-size: 12pt; font-weight: bold'><hr/>Shapes Inside</td></tr><tr><td style='float: left; width: 390px;'>\" + str + \"</td></tr></table>\");" +
+                                @"}
+                            </script>
                             </html>";
 
             System.IO.File.WriteAllText(System.IO.Path.Combine(OutputPath, "index.html"), html);
@@ -345,6 +388,101 @@ namespace ShapeConsoleApp.Business
             {
                 Directory.CreateDirectory(OutputPath);
             }
+        }
+
+        /// <summary>
+        /// Print Inside Shapes
+        /// </summary>
+        private void PrintInsideShapes()
+        {
+            CheckInsideShapes();
+            var id = ShapeList.Last().Id;
+            var list = (from shape in ShapeList where shape.InsideShapes.Contains(id) select "Shape -> " + shape.Name + " (Id:" + shape.Id + ")").ToList();
+            if (list.Count <= 0) return;
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("NOTE: This shape is inside of:");
+            foreach (var item in list)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
+
+        /// <summary>
+        /// Check Inside Shapes
+        /// </summary>
+        private void CheckInsideShapes()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["CHECK_INSIDE_SHAPES"]))
+                return;
+
+            var aux = ShapeList.Last();
+            for (int i = 0; i < ShapeList.ToArray().Length - 1; i++)
+            {
+                using (var bmp = new Bitmap(1024, 768))
+                {
+                    using (var gr = Graphics.FromImage(bmp))
+                    {
+                        gr.FillRectangle(Brushes.Orange, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height));
+                        aux.Draw(gr);
+                        ShapeList[i].Draw(gr);
+
+                        if (!ShapeList[i].Name.Equals("Donut") && (CountColors(bmp) == 2)) //That means shape[i] cointains aux shape
+                        {
+                            ShapeList[i].InsideShapes.Add(aux.Id);
+                        }
+                        else if (ShapeList[i].Name.Equals("Donut") && (CountColors(bmp) == 2)) //That means shape[i] cointains aux shape
+                        {
+                            gr.FillRectangle(Brushes.Orange, new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height));
+                            aux.Draw(gr);
+                            var auxColors = CountByColor(aux.SolidBrushColor.Color, bmp);
+                            ((Donut)ShapeList[i]).Draw2(gr);
+                            if (CountColors(bmp) > 2)
+                            {
+                                if (auxColors == CountByColor(aux.SolidBrushColor.Color, bmp))
+                                    ShapeList[i].InsideShapes.Add(aux.Id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Count By Color
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public int CountByColor(Color c, Bitmap bitmap)
+        {
+            int r = 0;
+            for (var y = 0; y < bitmap.Size.Height; ++y)
+                for (var x = 0; x < bitmap.Size.Width; ++x)
+                    if (c == bitmap.GetPixel(x, y))
+                        r++;
+            return r;
+        }
+
+        /// <summary>
+        /// Count Colors
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        private int CountColors(Bitmap bitmap)
+        {
+            var colors = new HashSet<Color>();
+
+            for (var y = 0; y < bitmap.Size.Height; ++y)
+            {
+                for (var x = 0; x < bitmap.Size.Width; ++x)
+                {
+                    colors.Add(bitmap.GetPixel(x, y));
+                }
+            }
+            return colors.Count;
         }
 
 
